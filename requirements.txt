@@ -1,0 +1,8 @@
+streamlit 
+agno 
+pypdf
+python-dotenv
+groq
+qdrant-client
+openai
+google-genai
