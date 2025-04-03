@@ -148,6 +148,20 @@ if 'agent' not in st.session_state:
         ]
     )
 
+    st.session_state.moderation_agent = Agent(
+        name="Content Moderation Agent",
+        role="Moderates user inputs to ensure they adhere to safety policies.",
+        # model=Groq(id="llama-guard-3-8b", api_key=os.environ["GROQ_API_KEY"]),
+        model= Gemini("gemini-2.0-flash-lite",api_key=os.environ["GOOGLE_API_KEY"], max_output_tokens=1024),
+
+        debug_mode=True,
+        instructions=[
+            "Evaluate the provided text and determine if it contains unsafe content.",
+            "Respond with 'safe' if the content is appropriate.",
+            "If the content is unsafe, respond with 'unsafe' followed by the violated category codes."
+        ]
+    )
+
 
 if 'messages' not in st.session_state:
     st.session_state.messages = []
@@ -155,7 +169,7 @@ if 'messages' not in st.session_state:
 col1, col2 = st.columns([2, 1])
 
 with col1:
-    st.markdown("## Chat with Legal Assistant 💬 ")
+    st.markdown("## Chat with Legal Assistant 💬")
     st.divider()
 
     # Display the CSS for custom styles
@@ -178,21 +192,36 @@ with col1:
 
     # Input and processing below the container
     if prompt := st.chat_input("Ask a legal question..."):
-        # Add user message to state
+        # Add user message to state 
         st.session_state.messages.append({"role": "user", "content": prompt})
 
         try:
+            # with st.spinner("✍️ Generating response..."):
+            #     response: RunResponse = st.session_state.agent.run(prompt)
+            #     if hasattr(response, 'extra_data') and hasattr(response.extra_data, 'references'):
+            #         st.session_state.references = response.extra_data.references[0].references
+            #     else:
+            #         st.session_state.references = []
+            
+            # # Add assistant response to state
+            # st.session_state.messages.append({"role": "assistant", "content": response.content})
+            
+            # # Force rerun to update the container with new messages
+            # st.rerun()
+
             with st.spinner("✍️ Generating response..."):
-                response: RunResponse = st.session_state.agent.run(prompt)
-                if hasattr(response, 'extra_data') and hasattr(response.extra_data, 'references'):
-                    st.session_state.references = response.extra_data.references[0].references
+                
+                moderation_response = st.session_state.moderation_agent.run(prompt)
+                if "safe" in moderation_response.content.lower():
+                    response = st.session_state.agent.run(prompt)
+                    if hasattr(response, 'extra_data') and hasattr(response.extra_data, 'references'):
+                        st.session_state.references = response.extra_data.references[0].references
+                    else:
+                        st.session_state.references = []
+
+                    st.session_state.messages.append({"role": "assistant", "content": response.content})
                 else:
-                    st.session_state.references = []
-            
-            # Add assistant response to state
-            st.session_state.messages.append({"role": "assistant", "content": response.content})
-            
-            # Force rerun to update the container with new messages
+                    st.session_state.messages.append({"role": "assistant", "content": "⚠️ Your input has been flagged as unsafe. Please rephrase your question."})
             st.rerun()
             
         except Exception as e:
