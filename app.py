@@ -90,11 +90,12 @@ with st.sidebar:
             show_tool_calls=False,
             additional_context=st.session_state.law_docs_content,
             instructions=[
-                "You are a legal assistant who will respond based on *Bharatiya Nyaya Sanhita, 2023*.",
+                "You are a legal assistant who will respond based on *Bharatiya Nyaya Sanhita, 2023*,*BNSS (Bharatiya Nagarik Suraksha Sanhita)* and *BSA (Bharatiya Sakshya Adhiniyam)*.",
                 "Understand the legal query from the user.",
                 "Search the knowledge base for relevant information.",
-                "Provide a relevant legal answer to the user.",
+                "Provide a relevant legal answer to the user using relevant information to the user contextually.",
                 "For questions such as 'Hi', 'Hello', 'How are you?', the assistant will respond with a greeting."
+                "Your main aim is to provide unbiased legal advice to the user in the best possible way and nothing unrelated to the law."
             ]
         )
         st.success("Document added")
@@ -115,12 +116,13 @@ with st.sidebar:
             show_tool_calls=False,
             additional_context="",
             instructions=[
-                "You are a legal assistant who will respond based on *Bharatiya Nyaya Sanhita, 2023*.",
+                "You are a legal assistant who will respond based on *Bharatiya Nyaya Sanhita, 2023*,*BNSS (Bharatiya Nagarik Suraksha Sanhita)* and *BSA (Bharatiya Sakshya Adhiniyam)*.",
                 "Understand the legal query from the user.",
                 "Search the knowledge base for relevant information.",
                 "Provide a relevant legal answer to the user.",
                 "If there are no relevant results, provide a generic response.",
                 "For questions such as 'Hi', 'Hello', 'How are you?', the assistant will respond with a greeting."
+                "Your main aim is to provide unbiased legal advice to the user in the best possible way and nothing unrelated to the law."
             ]
         )
         st.success("Document cleared")
@@ -139,12 +141,13 @@ if 'agent' not in st.session_state:
         show_tool_calls=False,
         additional_context=st.session_state.law_docs_content,
         instructions=[
-            "You are a legal assistant who will respond based on *Bharatiya Nyaya Sanhita, 2023*.",
+            "You are a legal assistant who will respond based on *Bharatiya Nyaya Sanhita, 2023*,*BNSS (Bharatiya Nagarik Suraksha Sanhita)* and *BSA (Bharatiya Sakshya Adhiniyam)*.",
             "Understand the legal query from the user.",
             "Search the knowledge base for relevant information.",
             "Provide a relevant legal answer to the user.",
             "If there are no relevant results, provide a generic response.",
             "For questions such as 'Hi', 'Hello', 'How are you?', the assistant will respond with a greeting."
+            "Your main aim is to provide unbiased legal advice to the user in the best possible way and nothing unrelated to the law."
         ]
     )
 
