@@ -41,16 +41,16 @@ if 'vector_db' not in st.session_state:
     st.session_state.BNS_knowledge_base = PDFUrlKnowledgeBase(
         urls=["https://www.indiacode.nic.in/bitstream/123456789/20062/1/a2023-45.pdf","https://www.indiacode.nic.in/bitstream/123456789/20099/3/aa2023-46.pdf","https://www.indiacode.nic.in/bitstream/123456789/20063/1/a2023-47.pdf"],
         vector_db=st.session_state.vector_db,
-        num_documents=3,
+        num_documents=10,
         embedder=GeminiEmbedder(dimensions=768),
         chunking_strategy=DocumentChunking(chunk_size=1500)
     )
 
-# Load knowledge base only once
-if not st.session_state.knowledge_base_loaded:
-    with st.spinner("🔄 Training model on Bharatiya Nyaya Sanhita and more..."):
-        st.session_state.BNS_knowledge_base.load(upsert=True)
-        st.session_state.knowledge_base_loaded = True
+# # Load knowledge base only once
+# if not st.session_state.knowledge_base_loaded:
+#     with st.spinner("🔄 Training model on Bharatiya Nyaya Sanhita and more..."):
+#         st.session_state.BNS_knowledge_base.load(recreate=False)
+#         st.session_state.knowledge_base_loaded = True
 
 # Sidebar for settings and information
 with st.sidebar:
@@ -105,7 +105,7 @@ with st.sidebar:
         st.session_state.law_docs_content = ""
         # Update agent with empty additional context
         st.session_state.agent = Agent(
-            model=Gemini("gemini-2.0-flash-lite",api_key=os.environ["GOOGLE_API_KEY"], max_output_tokens=1024),
+            model=Gemini("gemini-2.0-pro-exp-02-05",api_key=os.environ["GOOGLE_API_KEY"], max_output_tokens=1024),
             markdown=True,
             knowledge=st.session_state.BNS_knowledge_base,
             debug_mode=True,
@@ -130,7 +130,7 @@ with st.sidebar:
 # Initialize agent if not already done
 if 'agent' not in st.session_state:
     st.session_state.agent = Agent(
-        model= Gemini("gemini-2.0-flash-lite",api_key=os.environ["GOOGLE_API_KEY"], max_output_tokens=1024),
+        model= Gemini("gemini-2.0-flash",api_key=os.environ["GOOGLE_API_KEY"], max_output_tokens=1024),
         markdown=True,
         knowledge=st.session_state.BNS_knowledge_base,
         debug_mode=True,
@@ -141,21 +141,40 @@ if 'agent' not in st.session_state:
         show_tool_calls=False,
         additional_context=st.session_state.law_docs_content,
         instructions=[
-            "You are a legal assistant who will respond based on *Bharatiya Nyaya Sanhita, 2023*,*BNSS (Bharatiya Nagarik Suraksha Sanhita)* and *BSA (Bharatiya Sakshya Adhiniyam)*.",
-            "Understand the legal query from the user.",
-            "Search the knowledge base for relevant information.",
-            "Provide a relevant legal answer to the user.",
-            "If there are no relevant results, provide a generic response.",
-            "For questions such as 'Hi', 'Hello', 'How are you?', the assistant will respond with a greeting."
-            "Your main aim is to provide unbiased legal advice to the user in the best possible way and nothing unrelated to the law."
-        ]
+            """\
+            You are a legal assistant specializing in Indian law.
+            Your responses must be strictly based on the following legal frameworks:
+
+            Bharatiya Nyaya Sanhita, 2023 (BNS)
+
+            Bharatiya Nagarik Suraksha Sanhita (BNSS)
+
+            Bharatiya Sakshya Adhiniyam (BSA)
+
+            But no need to provide by saying I am an AI assistant and cannot provide legal advice. I can only provide information based on the Bharatiya Nyaya Sanhita, 2023 (BNS), Bharatiya Nagarik Suraksha Sanhita (BNSS), and Bharatiya Sakshya Adhiniyam (BSA) in the output.
+
+            Instructions:
+
+            Understand the user's legal query with full context and intent.
+
+            Retrieve relevant sections or insights from the above laws.
+
+            Provide a clear, accurate, and unbiased legal response using only the relevant provisions from BNS, BNSS, and BSA.
+
+            For casual inputs such as “Hi”, “Hello”, or “How are you?”, respond with a polite and professional greeting.
+
+            Avoid giving responses that are outside the legal domain or unrelated to Indian law.
+
+            #Primary Objective:
+            Offer precise, trustworthy, and legally sound guidance rooted in Indian statutory law to help users make informed decisions.
+            """]
     )
 
     st.session_state.moderation_agent = Agent(
         name="Content Moderation Agent",
         role="Moderates user inputs to ensure they adhere to safety policies.",
         # model=Groq(id="llama-guard-3-8b", api_key=os.environ["GROQ_API_KEY"]),
-        model= Gemini("gemini-2.0-flash-lite",api_key=os.environ["GOOGLE_API_KEY"], max_output_tokens=1024),
+        model= Gemini("gemini-2.0-flash",api_key=os.environ["GOOGLE_API_KEY"], max_output_tokens=1024),
 
         debug_mode=True,
         instructions=[
@@ -222,7 +241,10 @@ with col1:
                     else:
                         st.session_state.references = []
 
+
+                    print("Response:", response.content)
                     st.session_state.messages.append({"role": "assistant", "content": response.content})
+
                 else:
                     st.session_state.messages.append({"role": "assistant", "content": "⚠️ Your input has been flagged as unsafe. Please rephrase your question."})
             st.rerun()
