@@ -189,7 +189,7 @@ if 'agent' not in st.session_state:
 if 'messages' not in st.session_state:
     st.session_state.messages = []
 
-col1, col2 = st.columns([2, 1])
+col1, col2 = st.columns([3, 1])
 
 with col1:
     st.markdown("## Chat with Legal Assistant 💬")
