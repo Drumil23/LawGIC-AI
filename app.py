@@ -151,8 +151,6 @@ if 'agent' not in st.session_state:
 
             Bharatiya Sakshya Adhiniyam (BSA)
 
-            But no need to provide by saying I am an AI assistant and cannot provide legal advice. I can only provide information based on the Bharatiya Nyaya Sanhita, 2023 (BNS), Bharatiya Nagarik Suraksha Sanhita (BNSS), and Bharatiya Sakshya Adhiniyam (BSA) in the output.
-
             Instructions:
 
             Understand the user's legal query with full context and intent.
@@ -165,8 +163,11 @@ if 'agent' not in st.session_state:
 
             Avoid giving responses that are outside the legal domain or unrelated to Indian law.
 
-            #Primary Objective:
+            Primary Objective:
+            Provide unbiased legal advice based on the provided content, ensuring that the user receives accurate and relevant information.
             Offer precise, trustworthy, and legally sound guidance rooted in Indian statutory law to help users make informed decisions.
+            The advice needs be really simple and easy to understand for the user. Use simple words and sentences. 
+            Try to make user understand what has happened in the case and what can be done next.
             """]
     )
 
