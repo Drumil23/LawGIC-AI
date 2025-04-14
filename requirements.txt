@@ -8,3 +8,7 @@ openai
 google-genai
 google-generativeai
 openpyxl
+matplotlib
+pandas
+numpy
+seaborn
