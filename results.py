@@ -35,9 +35,9 @@ def read_xlsx(uploaded_file):
         st.stop()
 
 # Streamlit layout
-st.set_page_config(page_title="LLM Grading Dashboard (XLSX)", layout="wide")
+st.set_page_config(page_title="LLM Grading Dashboard", layout="wide")
 st.title("📊 LawGIC-AI Evaluation Dashboard")
-st.markdown("Upload an `.xlsx` file with **Expected** and **Actual** responses. The app will evaluate chatbot answers based on legal accuracy.")
+st.markdown("Upload an `.xlsx` file with **Expected** and **Actual** responses.")
 
 # File upload
 uploaded_file = st.file_uploader("📂 Upload XLSX file", type=["xlsx"])

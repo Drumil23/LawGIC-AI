@@ -7,3 +7,4 @@ qdrant-client
 openai
 google-genai
 google-generativeai
+openpyxl
